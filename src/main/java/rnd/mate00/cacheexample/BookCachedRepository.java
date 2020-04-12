@@ -2,6 +2,7 @@ package rnd.mate00.cacheexample;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,15 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class BookSlowRepository implements BookRepository {
-
-    @Value("${repository.book.by.title.query}")
-    private String bookByTitleQuery;
+public class BookCachedRepository implements BookRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
+    @Value("${repository.book.by.title.query}")
+    private String bookByTitleQuery;
+
     @Override
+    @Cacheable("books")
     public Book getBookByTitle(String title) {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("title", title);
